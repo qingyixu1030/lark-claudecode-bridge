@@ -337,8 +337,9 @@ class SessionStore:
         user.setdefault("summaries", {}).update(summaries)
         self._save()
 
-    def get_current(self, user_id: str) -> Session:
-        cur = self._user(user_id)["current"]
+    def get_current(self, user_id: str, chat_id: str) -> Session:
+        """Get current session config for a specific chat"""
+        cur = self.get_current_raw(user_id, chat_id)
         return Session(
             session_id=cur.get("session_id"),
             model=cur.get("model", DEFAULT_MODEL),
@@ -412,8 +413,27 @@ class SessionStore:
         self._save()
         return old_title
 
-    def set_model(self, user_id: str, model: str):
-        self._user(user_id)["current"]["model"] = model
+    def set_model(self, user_id: str, chat_id: str, model: str):
+        """Set model for a specific chat"""
+        chat_key = "private" if chat_id == user_id else chat_id
+
+        if user_id not in self._data:
+            self._data[user_id] = {}
+
+        if chat_key not in self._data[user_id]:
+            self._data[user_id][chat_key] = {
+                "current": {
+                    "session_id": None,
+                    "model": DEFAULT_MODEL,
+                    "cwd": DEFAULT_CWD,
+                    "permission_mode": PERMISSION_MODE,
+                    "started_at": datetime.now().isoformat(),
+                    "preview": "",
+                },
+                "history": [],
+            }
+
+        self._data[user_id][chat_key]["current"]["model"] = model
         self._save()
 
     def set_cwd(self, user_id: str, cwd: str):
@@ -478,5 +498,32 @@ class SessionStore:
     def list_sessions(self, user_id: str) -> list:
         return list(reversed(self._user(user_id)["history"]))
 
-    def get_current_raw(self, user_id: str) -> dict:
-        return self._user(user_id)["current"]
+    def get_current_raw(self, user_id: str, chat_id: str = None) -> dict:
+        """Get raw current session data for a specific chat"""
+        if chat_id is None:
+            # Backward compatibility: if no chat_id, use old behavior
+            return self._user(user_id)["current"]
+
+        # Normalize chat_id: private chat uses "private" key
+        chat_key = "private" if chat_id == user_id else chat_id
+
+        # Ensure user exists with new structure
+        if user_id not in self._data:
+            self._data[user_id] = {}
+
+        # Ensure chat exists
+        if chat_key not in self._data[user_id]:
+            self._data[user_id][chat_key] = {
+                "current": {
+                    "session_id": None,
+                    "model": DEFAULT_MODEL,
+                    "cwd": DEFAULT_CWD,
+                    "permission_mode": PERMISSION_MODE,
+                    "started_at": datetime.now().isoformat(),
+                    "preview": "",
+                },
+                "history": [],
+            }
+            self._save()
+
+        return self._data[user_id][chat_key]["current"]
