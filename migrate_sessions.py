@@ -89,7 +89,7 @@ if __name__ == "__main__":
     import sys
 
     # Default path
-    default_path = os.path.expanduser("~/.feishu-claude/sessions.json")
+    default_path = os.path.expanduser("~/.lark-claude/sessions.json")
 
     if len(sys.argv) > 1:
         sessions_path = sys.argv[1]
