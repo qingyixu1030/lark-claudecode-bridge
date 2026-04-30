@@ -3,22 +3,22 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.cindy.lark-codex</string>
+    <string>com.example.lark-codex</string>
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/cindy/projects/lark-agents-bridge/scripts/launchd-codex-bridge.sh</string>
+        <string>/ABSOLUTE/PATH/TO/lark-agents-bridge/scripts/launchd-codex-bridge.sh</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/cindy/projects/lark-agents-bridge</string>
+    <string>/ABSOLUTE/PATH/TO/lark-agents-bridge</string>
 
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/Applications/Codex.app/Contents/Resources:/Users/cindy/.npm-global/bin:/Users/cindy/.local/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+        <string>/Applications/Codex.app/Contents/Resources:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
         <key>HOME</key>
-        <string>/Users/cindy</string>
+        <string>/Users/YOUR_MAC_USER</string>
         <key>PYTHONUNBUFFERED</key>
         <string>1</string>
     </dict>
@@ -33,8 +33,8 @@
     <integer>10</integer>
 
     <key>StandardOutPath</key>
-    <string>/Users/cindy/projects/lark-agents-bridge/logs/codex-stdout.log</string>
+    <string>/ABSOLUTE/PATH/TO/lark-agents-bridge/logs/codex-stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/cindy/projects/lark-agents-bridge/logs/codex-stderr.log</string>
+    <string>/ABSOLUTE/PATH/TO/lark-agents-bridge/logs/codex-stderr.log</string>
 </dict>
 </plist>

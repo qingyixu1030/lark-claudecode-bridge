@@ -20,7 +20,7 @@ FEISHU_APP_SECRET=xxx
 DEFAULT_MODEL=gpt-5.4
 DEFAULT_CWD=/path/to/your/project
 PERMISSION_MODE=bypassPermissions
-CODEX_HOME=/Users/cindy/.codex
+CODEX_HOME=~/.codex
 ```
 
 If Codex is running from a sandboxed context that cannot write to `~/.codex`, create a local writable Codex home and copy only your existing Codex auth/config:
@@ -75,7 +75,7 @@ Useful extras:
 
 ## Agent Hub
 
-Agent Hub stores shared project memory under `/Users/cindy/projects` so Codex, Claude Code, Claude Desktop, and Lark group chats can work from the same source of truth.
+Agent Hub stores shared project memory under `~/projects` by default so Codex, Claude Code, Claude Desktop, and Lark group chats can work from the same source of truth.
 
 Recommended pattern:
 
@@ -86,12 +86,12 @@ One project = one folder = one Lark group chat = one memory set
 Commands:
 
 - `/project` — show current project binding and known projects
-- `/project new NAME` — create `/Users/cindy/projects/NAME`, add shared memory files, and bind the current Lark chat
+- `/project new NAME` — create `~/projects/NAME`, add shared memory files, and bind the current Lark chat
 - `/project use NAME_OR_PATH` — bind the current Lark chat to an existing/new project
 - `/brief` — show the current project brief from shared memory files
 - `/handoff TEXT` — append a handoff note to `HANDOFF.md`
 - `/task TEXT` — append a task to `TASKS.md`
-- `/sync` — write `PROJECT_BRIEF.md` and a copy in `/Users/cindy/projects/_agent-hub/latest-briefs`
+- `/sync` — write `PROJECT_BRIEF.md` and a copy in `~/projects/_agent-hub/latest-briefs`
 
 Project memory files:
 

@@ -85,7 +85,7 @@ Installs to `~/.agents/skills/lark-*`, symlinks into `~/.claude/skills/`.
 Skills load at Claude session start. Restart bridge so new sessions pick them up:
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.cindy.lark-claude
+launchctl kickstart -k gui/$(id -u)/com.example.lark-claude
 ```
 
 ## App-side requirements (Open Platform)

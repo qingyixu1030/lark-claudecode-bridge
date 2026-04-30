@@ -17,7 +17,7 @@ PROJECT_MEMORY_FILES = {
 }
 
 HUB_FILES = {
-    "GLOBAL_CONTEXT.md": "# Global Agent Context\n\nCanonical project root: `/Users/cindy/projects`.\n",
+    "GLOBAL_CONTEXT.md": "# Global Agent Context\n\nCanonical project root: `~/projects` unless PROJECTS_ROOT overrides it.\n",
     "WORKING_RULES.md": "# Working Rules\n\nOne project = one folder = one Lark group chat = one shared memory set.\n",
     "shared-memory.md": "# Shared Memory\n\nUse project-specific memory files for durable context.\n",
 }

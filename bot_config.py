@@ -16,7 +16,7 @@ DEFAULT_CWD = os.path.expanduser(os.getenv("DEFAULT_CWD", "~"))
 PERMISSION_MODE = os.getenv("PERMISSION_MODE", "bypassPermissions")
 
 SESSIONS_DIR = os.path.expanduser(os.getenv("SESSIONS_DIR", "~/.lark-claude"))
-PROJECTS_ROOT = os.path.expanduser(os.getenv("PROJECTS_ROOT", "/Users/cindy/projects"))
+PROJECTS_ROOT = os.path.expanduser(os.getenv("PROJECTS_ROOT", "~/projects"))
 AGENT_HUB_ROOT = os.path.expanduser(os.getenv("AGENT_HUB_ROOT", os.path.join(PROJECTS_ROOT, "_agent-hub")))
 
 # 卡片按钮回调 HTTP 端口（需 ngrok 暴露）

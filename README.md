@@ -56,7 +56,7 @@ This fork has been **tested end-to-end on Lark international** (larksuite.com). 
 #### Install & run
 
 ```bash
-git clone https://github.com/cindyxu1030/lark-agents-bridge.git
+git clone https://github.com/YOUR_GITHUB_USER/lark-agents-bridge.git
 cd lark-agents-bridge
 
 python3 -m venv .venv
@@ -187,20 +187,84 @@ Lark/Feishu pushes messages over a WebSocket to the local process. The process i
 | `PERMISSION_MODE` | no | `bypassPermissions` | Tool permission mode |
 | `STREAM_CHUNK_SIZE` | no | `20` | Char threshold per streaming card update |
 | `CLAUDE_CLI_PATH` | no | auto | Path to `claude` binary |
+| `PROJECTS_ROOT` | no | `~/projects` | Root folder for project workspaces and Agent Hub memory |
+| `AGENT_HUB_ROOT` | no | `$PROJECTS_ROOT/_agent-hub` | Shared Agent Hub metadata folder |
 
 > The env vars are named `FEISHU_*` for upstream compatibility but apply equally to Lark.
+
+### Agent Hub
+
+Agent Hub is the shared project-memory layer for Claude Code, Codex, Claude Desktop, and Lark group chats. It is designed so multiple chats can map to different project folders without leaking context across projects.
+
+Default layout:
+
+```text
+~/projects/
+  _agent-hub/
+    GLOBAL_CONTEXT.md
+    WORKING_RULES.md
+    lark-chat-map.json
+    shared-memory.md
+    latest-briefs/
+
+  project-a/
+    AGENTS.md
+    CLAUDE.md
+    PROJECT_CONTEXT.md
+    TASKS.md
+    DECISIONS.md
+    HANDOFF.md
+    PROJECT_BRIEF.md
+
+  project-b/
+    ...
+```
+
+You can change the root in `.env`:
+
+```bash
+PROJECTS_ROOT=~/projects
+AGENT_HUB_ROOT=~/projects/_agent-hub
+```
+
+Recommended operating model:
+
+```text
+One Lark group chat = one project folder = one shared memory set
+```
+
+Agent Hub commands:
+
+| Command | Description |
+|---------|-------------|
+| `/project` | Show current chat binding and known projects |
+| `/project new <name>` | Create `PROJECTS_ROOT/<name>` and bind the current chat |
+| `/project use <name-or-path>` | Bind the current chat to an existing or new project folder |
+| `/brief` | Summarize current project memory |
+| `/task <text>` | Append a task to `TASKS.md` |
+| `/handoff <text>` | Append a handoff note to `HANDOFF.md` |
+| `/sync` | Generate `PROJECT_BRIEF.md` and a copy under `_agent-hub/latest-briefs` |
+
+The Lark chat mapping is stored in:
+
+```text
+$AGENT_HUB_ROOT/lark-chat-map.json
+```
+
+This file should contain project paths for the local machine only. Do not commit your generated Agent Hub folder unless you intentionally want to publish that project memory.
 
 ### Persistent Deployment (macOS launchd)
 
 Run as a background service that auto-starts at login and restarts on crash.
 
 ```bash
-# 1. Edit deploy/lark-claude.plist — change all hardcoded paths to yours
-#    (the file currently has /Users/cindy/projects/lark-claudecode-bridge)
+# 1. Copy the template and replace placeholders:
+#    /ABSOLUTE/PATH/TO/lark-agents-bridge
+#    /Users/YOUR_MAC_USER
 
 # 2. Install and load
-cp deploy/lark-claude.plist ~/Library/LaunchAgents/com.cindy.lark-claude.plist
-launchctl load ~/Library/LaunchAgents/com.cindy.lark-claude.plist
+cp deploy/lark-claude.plist ~/Library/LaunchAgents/com.example.lark-claude.plist
+launchctl load ~/Library/LaunchAgents/com.example.lark-claude.plist
 
 # 3. Verify
 launchctl list | grep lark-claude     # process should be listed
@@ -210,8 +274,8 @@ tail -f stdout.log                     # logs in repo dir
 Operations:
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.cindy.lark-claude    # restart
-launchctl unload ~/Library/LaunchAgents/com.cindy.lark-claude.plist   # stop
+launchctl kickstart -k gui/$(id -u)/com.example.lark-claude    # restart
+launchctl unload ~/Library/LaunchAgents/com.example.lark-claude.plist   # stop
 ```
 
 ### Lark Skills (Calendar, Mail, Docs, etc.)
@@ -266,8 +330,8 @@ To let the bot read/write your calendar, send mail, etc. via Lark APIs, install 
 #### 安装与启动
 
 ```bash
-git clone https://github.com/cindyxu1030/lark-claudecode-bridge.git
-cd lark-claudecode-bridge
+git clone https://github.com/YOUR_GITHUB_USER/lark-agents-bridge.git
+cd lark-agents-bridge
 
 python3 -m venv .venv
 source .venv/bin/activate
@@ -376,8 +440,68 @@ python main.py
 | `PERMISSION_MODE` | 否 | `bypassPermissions` | 工具权限模式 |
 | `STREAM_CHUNK_SIZE` | 否 | `20` | 流式推送的字符阈值 |
 | `CLAUDE_CLI_PATH` | 否 | 自动查找 | Claude CLI 路径 |
+| `PROJECTS_ROOT` | 否 | `~/projects` | 项目工作区和 Agent Hub 记忆根目录 |
+| `AGENT_HUB_ROOT` | 否 | `$PROJECTS_ROOT/_agent-hub` | Agent Hub 共享元数据目录 |
 
 > 变量名沿用 `FEISHU_*` 前缀是为了兼容 upstream，对 Lark 同样适用。
+
+### Agent Hub
+
+Agent Hub 是 Claude Code、Codex、Claude Desktop 和 Lark 群聊共享项目记忆的结构。它的目标是让不同项目群绑定到不同项目目录，避免上下文串线。
+
+默认结构：
+
+```text
+~/projects/
+  _agent-hub/
+    GLOBAL_CONTEXT.md
+    WORKING_RULES.md
+    lark-chat-map.json
+    shared-memory.md
+    latest-briefs/
+
+  project-a/
+    AGENTS.md
+    CLAUDE.md
+    PROJECT_CONTEXT.md
+    TASKS.md
+    DECISIONS.md
+    HANDOFF.md
+    PROJECT_BRIEF.md
+```
+
+可以在 `.env` 里改成自己的目录：
+
+```bash
+PROJECTS_ROOT=~/projects
+AGENT_HUB_ROOT=~/projects/_agent-hub
+```
+
+推荐模式：
+
+```text
+一个 Lark 群 = 一个项目目录 = 一套共享记忆
+```
+
+常用命令：
+
+| 命令 | 说明 |
+|------|------|
+| `/project` | 查看当前群绑定和已有项目 |
+| `/project new 名称` | 创建 `$PROJECTS_ROOT/名称` 并绑定当前群 |
+| `/project use 名称或路径` | 绑定当前群到已有或新项目目录 |
+| `/brief` | 汇总当前项目记忆 |
+| `/task 内容` | 追加任务到 `TASKS.md` |
+| `/handoff 内容` | 追加交接记录到 `HANDOFF.md` |
+| `/sync` | 生成 `PROJECT_BRIEF.md` 和 `_agent-hub/latest-briefs` 副本 |
+
+Lark 群到项目的映射存放在：
+
+```text
+$AGENT_HUB_ROOT/lark-chat-map.json
+```
+
+这个文件是本机状态。除非你明确想公开项目记忆，否则不要提交生成出来的 `_agent-hub` 目录。
 
 ### 持久化部署（macOS launchd）
 
@@ -387,8 +511,8 @@ python main.py
 # 1. 编辑 deploy/lark-claude.plist，改成你自己的绝对路径
 
 # 2. 安装并加载
-cp deploy/lark-claude.plist ~/Library/LaunchAgents/com.cindy.lark-claude.plist
-launchctl load ~/Library/LaunchAgents/com.cindy.lark-claude.plist
+cp deploy/lark-claude.plist ~/Library/LaunchAgents/com.example.lark-claude.plist
+launchctl load ~/Library/LaunchAgents/com.example.lark-claude.plist
 
 # 3. 验证
 launchctl list | grep lark-claude
@@ -398,8 +522,8 @@ tail -f stdout.log
 运维：
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.cindy.lark-claude   # 重启
-launchctl unload ~/Library/LaunchAgents/com.cindy.lark-claude.plist  # 停服务
+launchctl kickstart -k gui/$(id -u)/com.example.lark-claude   # 重启
+launchctl unload ~/Library/LaunchAgents/com.example.lark-claude.plist  # 停服务
 ```
 
 ### Lark Skills（日历、邮件、文档等）
@@ -410,7 +534,7 @@ launchctl unload ~/Library/LaunchAgents/com.cindy.lark-claude.plist  # 停服务
 
 ## Credits
 
-Forked from [joewongjc/feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) by Jonathan. Maintained by Cindy Xu.
+Forked from [joewongjc/feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) by Jonathan. Maintained by the lark-agents-bridge contributors.
 
 ## License
 
